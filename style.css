@@ -1,0 +1,91 @@
+*, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    height: 100vh;
+    width: 100%;
+    background-color: rgb(25, 25, 25);
+
+    font: 200 16px/1 Helvetica, Arial, sans-serif;
+}
+
+main {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.loading_overlay {
+  z-index: 99;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  background-color: rgb(25, 25, 25);
+  animation: fadeOut 0.5s ease-out 1.5s forwards; /* Add animation */
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    display: 0;
+  }
+}
+
+.loader {
+  z-index: 10;
+  position: relative;
+  margin: auto;
+  box-sizing: border-box;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  transform-origin: 50% 50%;
+  transform: perspective(200px) rotateX(66deg);
+  animation: spinner-wiggle 1s infinite;
+}
+
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border: 4px solid #0000;
+  animation: spinner-spin 1.2s cubic-bezier(0.6, 0.2, 0, 0.8) infinite,
+    spinner-fade 1.5s linear infinite;
+  z-index: 1;
+}
+
+.loader:before {
+  border-top-color: #ffffff;
+}
+
+.loader:after {
+  border-top-color: #ffffff;
+  /* animation-delay: 1.2s; */
+}
+
+@keyframes spinner-spin {
+  100% { transform: rotate(360deg)}
+}
+
+@keyframes spinner-fade {
+  25%, 75% { opacity: 0.1}
+  50% { opacity: 1 }
+}
+    
