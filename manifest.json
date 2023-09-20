@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Flight",
-    "version": "2.0",
+    "version": "2.1",
     "description": "A dynamic, visually satisfying flight experience.",
     "author": "",
     "chrome_url_overrides" : {

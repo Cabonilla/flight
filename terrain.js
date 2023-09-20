@@ -1,3 +1,11 @@
+let firstDrawCompleted = false;
+let overlay;
+
+window.onload = function() {
+  overlay = document.getElementById("loading_overlay");
+  print(overlay)
+}
+
 var cols, rows;
 var sclw = 30;
 var sclh = 10;
@@ -134,6 +142,13 @@ function draw() {
   // rotateX(angleX);
   // rotateY(angleY * 1.3);
   // rotateZ(angle * 0.7);
+
+  if (!firstDrawCompleted) {
+    firstDrawCompleted = true;
+    overlay.style.animation = "fadeOut 0.5s ease-out 0s forwards"
+    print(firstDrawCompleted);
+    console.log("HELLO.")
+  }
 }
 
 function create2DArray(numArrays, numSubArrays) {
