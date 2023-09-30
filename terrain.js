@@ -46,7 +46,7 @@ let shiftD = false;
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
   // Perspective adjusts the limitations of the camera for object clipping.
-  perspective(PI / 3, width / height, 0, 1050);
+  perspective(PI / 3, width / height, 500, 1050);
   frameRate(frames);
 
   // Ship.
@@ -140,7 +140,7 @@ function draw() {
   }
 
   for (let i = clouds.length - 1; i >= 0; i--) {
-    if (clouds[i].z >= 150) {
+    if (clouds[i].z >= 400) {
       console.log(clouds[i]);
       clouds.splice(i, 1);
     }
