@@ -1,3 +1,4 @@
+// Loading overlay stuff.
 let firstDrawCompleted = false;
 let overlay;
 
@@ -5,13 +6,16 @@ window.onload = function () {
   overlay = document.getElementById("loading_overlay");
 };
 
+// Base values.
 var cols, rows;
 var sclw = 30;
 var sclh = 10;
 var scl = 30;
-var defaultCloudY = -310;
+
+// Stores cloud objects.
 var clouds = [];
 
+// Creates the terrain.
 var terrain;
 var xoff;
 var yoff;
@@ -19,9 +23,11 @@ var flying = 0;
 let angleX = 1.3;
 let angleY = 0;
 let ship;
-// let cloud1;
+
+// Dictates frame rate. Low on purpose for vintage effect.
 let frames = 1;
 
+// Creates dynamic terrain size.
 if (window) {
   var w = window.innerWidth * 1.5;
   var h = window.innerHeight * 0.75;
@@ -31,6 +37,7 @@ window.onresize = function () {
   location.reload();
 };
 
+// For subtle ship movements.
 let shiftL = false;
 let shiftR = false;
 let shiftU = false;
@@ -38,8 +45,11 @@ let shiftD = false;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  // Perspective adjusts the limitations of the camera for object clipping.
   perspective(PI / 3, width / height, 0, 1050);
   frameRate(frames);
+
+  // Ship.
   ship = loadModel("ship.obj", true);
   cloud1 = loadModel("cloud1.obj", true);
 
@@ -52,20 +62,20 @@ function setup() {
 }
 
 function draw() {
+  // Controls how terrain moves.
   flying -= 0.1;
 
   yoff = flying;
-  // yoff = 0;
   for (let y = 0; y < rows; y++) {
     xoff = 0;
     for (let x = 0; x < cols; x++) {
-      // terrain[x][y] = random(-10,10);
       terrain[x][y] = map(noise(xoff, yoff), 0, 1, -75, 75);
       xoff += 0.2;
     }
     yoff += 0.2;
   }
 
+  // Sets up entire window.
   background(25);
   ambientLight(100);
   directionalLight(255, 255, 255, 0, 0, 1);
@@ -76,6 +86,7 @@ function draw() {
   rotateX(angleX);
   rotateY(angleY);
 
+  // Adjusts plane movement.
   if (angleY >= 0.05) {
     shiftL = true;
     shiftR = false;
@@ -92,15 +103,6 @@ function draw() {
     angleY += 0.01;
   }
 
-  // if (Math.floor(angleY) == 0) {
-  //   angleX += 0.01
-  // } else {
-  //   angleX -= 0.01
-  // }
-
-  // console.log(Math.floor(angleY))
-  // console.log(abs(angleY.toFixed(2)))
-
   if (abs(angleY.toFixed(2)) == 0 && shiftU) {
     shiftD = true;
     shiftU = false;
@@ -115,89 +117,57 @@ function draw() {
     angleX -= 0.01;
   }
 
-  // console.log(Math.floor(angleY) % 2 == 0)
-  // console.log(angleY)
-
-  // if (angleY.toFixed(2) >= 0) {
-  //   angleX += 0.01
-  // } else {
-  //   angleX -= 0.01
-  // }
-
+  // Creates ship model.
   model(ship);
   resetMatrix();
 
-  // // rotateX(1.5);
-  // translate(600, -500, cloudZ);
-  // cloudZ = cloudZ + 20;
-  // if (cloudZ >= 150) {
-  //   cloudZ = -310;
-  // }
-  // box(50, 50, 75);
-  // print(cloudZ)
-  // resetMatrix();
-
+  // Creates cloud models.
   cloudChance = getRandomInt(1, 100);
   if (cloudChance <= 5 && clouds.length <= 2) {
     let cloudX = getRandomInt(-600, 600);
     let cloudY = getRandomInt(-150, -350);
     let cloudZ = -310;
 
-    // cloudX = 0
-    // cloudY = 0
-    // cloudZ = 0
-    // print("clouds length: ", clouds.length)
     clouds.push(new Cloud(cloudX, cloudY, cloudZ));
   }
 
   for (var i = 0; i < clouds.length; i++) {
-    // rotateX(1.5);
     clouds[i].move();
 
     if (clouds[i]) {
       clouds[i].display();
     }
   }
-  // console.log(clouds);
-  // console.log(clouds.length);
 
   for (let i = clouds.length - 1; i >= 0; i--) {
     if (clouds[i].z >= 150) {
       console.log(clouds[i]);
       clouds.splice(i, 1);
-      // clouds.shift();
     }
   }
   resetMatrix();
 
-  //   translate(width/2, height/2);
+  // Creates and calculates terrain.
   rotateX(PI / 3);
   translate(-w / 2, -h / 2 + 200, -100);
 
   for (var y = 0; y < rows - 1; y++) {
     beginShape(TRIANGLE_STRIP);
     for (var x = 0; x < cols; x++) {
-      // rect(x*scl, y*scl, scl, scl);
-      // vertex(x * scl, y * scl, random(-10, 10));
-      // vertex(x * scl, (y + 1) * scl, random(-10, 10));
       vertex(x * scl, y * scl, terrain[x][y]);
       vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
     }
     endShape();
   }
 
-  // rotateX(angleX);
-  // rotateY(angleY * 1.3);
-  // rotateZ(angle * 0.7);
-
+  // Removes loading overlay.
   if (!firstDrawCompleted) {
     firstDrawCompleted = true;
     overlay.style.animation = "fadeOut 0.5s ease-out 0s forwards";
-    // print(firstDrawCompleted);
-    // console.log("HELLO.");
   }
 }
 
+// Creates the array that in turn shapes the terrain.
 function create2DArray(numArrays, numSubArrays) {
   var arr = new Array(numArrays);
   for (var i = 0; i < numArrays; i++) {
@@ -206,55 +176,27 @@ function create2DArray(numArrays, numSubArrays) {
   return arr;
 }
 
-function negative(number) {
-  return !Object.is(Math.abs(number), +number);
-}
-
-// function cloudGen(cloudNum, cloudChance) {
-//   print(cloudChance);
-//   if (cloudChance == 1) {
-//     if (cloudNum <= 3) {
-//       let cloudX = getRandomInt(-750, 750);
-//       let cloudZ = getRandomInt(250, 450);
-
-//       cloudNum = cloudNum + 1;
-//       push();
-//       rotateX(1.5);
-//       translate(cloudX, cloudY, cloudZ);
-//       cloudY = cloudY + 20;
-//       if (cloudY >= 150) {
-//         cloudY = -310;
-//       }
-//       box(50, 75, 50);
-//     }
-//   }
-// }
-
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+// Forms cloud objects to then be added to the canvas.
 class Cloud {
   constructor(cloudX, cloudY, cloudZ) {
     this.x = cloudX;
     this.y = cloudY;
-    this.z = -310;
+    this.z = cloudZ;
   }
 
-  // this.cloudX = getRandomInt(-750, 750);
-  // this.cloudZ = getRandomInt(250, 450);
-  // this.cloudY = -310;
-
   display() {
-    // rotateX(1.5);
     push();
     translate(this.x, this.y, this.z);
-    box(50, 50, 75);
+    box(50, 25, 75);
     pop();
   }
 
   move() {
-    // translate(this.x, this.y, this.z);
-    this.z = this.z + 100;
+    // Slowly moves clouds towards camera.
+    this.z = this.z + 20;
   }
 }
