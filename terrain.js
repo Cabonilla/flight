@@ -1,15 +1,16 @@
 let firstDrawCompleted = false;
 let overlay;
 
-window.onload = function() {
+window.onload = function () {
   overlay = document.getElementById("loading_overlay");
-  print(overlay)
-}
+};
 
 var cols, rows;
 var sclw = 30;
 var sclh = 10;
 var scl = 30;
+var defaultCloudY = -310;
+var clouds = [];
 
 var terrain;
 var xoff;
@@ -18,6 +19,7 @@ var flying = 0;
 let angleX = 1.3;
 let angleY = 0;
 let ship;
+// let cloud1;
 let frames = 1;
 
 if (window) {
@@ -36,8 +38,10 @@ let shiftD = false;
 
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  perspective(PI / 3, width / height, 0, 1050);
   frameRate(frames);
   ship = loadModel("ship.obj", true);
+  cloud1 = loadModel("cloud1.obj", true);
 
   cols = Math.ceil(w / sclw);
   rows = Math.ceil(h / sclh);
@@ -123,6 +127,49 @@ function draw() {
   model(ship);
   resetMatrix();
 
+  // // rotateX(1.5);
+  // translate(600, -500, cloudZ);
+  // cloudZ = cloudZ + 20;
+  // if (cloudZ >= 150) {
+  //   cloudZ = -310;
+  // }
+  // box(50, 50, 75);
+  // print(cloudZ)
+  // resetMatrix();
+
+  cloudChance = getRandomInt(1, 100);
+  if (cloudChance <= 5 && clouds.length <= 2) {
+    let cloudX = getRandomInt(-600, 600);
+    let cloudY = getRandomInt(-150, -350);
+    let cloudZ = -310;
+
+    // cloudX = 0
+    // cloudY = 0
+    // cloudZ = 0
+    // print("clouds length: ", clouds.length)
+    clouds.push(new Cloud(cloudX, cloudY, cloudZ));
+  }
+
+  for (var i = 0; i < clouds.length; i++) {
+    // rotateX(1.5);
+    clouds[i].move();
+
+    if (clouds[i]) {
+      clouds[i].display();
+    }
+  }
+  // console.log(clouds);
+  // console.log(clouds.length);
+
+  for (let i = clouds.length - 1; i >= 0; i--) {
+    if (clouds[i].z >= 150) {
+      console.log(clouds[i]);
+      clouds.splice(i, 1);
+      // clouds.shift();
+    }
+  }
+  resetMatrix();
+
   //   translate(width/2, height/2);
   rotateX(PI / 3);
   translate(-w / 2, -h / 2 + 200, -100);
@@ -145,9 +192,9 @@ function draw() {
 
   if (!firstDrawCompleted) {
     firstDrawCompleted = true;
-    overlay.style.animation = "fadeOut 0.5s ease-out 0s forwards"
-    print(firstDrawCompleted);
-    console.log("HELLO.")
+    overlay.style.animation = "fadeOut 0.5s ease-out 0s forwards";
+    // print(firstDrawCompleted);
+    // console.log("HELLO.");
   }
 }
 
@@ -161,4 +208,53 @@ function create2DArray(numArrays, numSubArrays) {
 
 function negative(number) {
   return !Object.is(Math.abs(number), +number);
+}
+
+// function cloudGen(cloudNum, cloudChance) {
+//   print(cloudChance);
+//   if (cloudChance == 1) {
+//     if (cloudNum <= 3) {
+//       let cloudX = getRandomInt(-750, 750);
+//       let cloudZ = getRandomInt(250, 450);
+
+//       cloudNum = cloudNum + 1;
+//       push();
+//       rotateX(1.5);
+//       translate(cloudX, cloudY, cloudZ);
+//       cloudY = cloudY + 20;
+//       if (cloudY >= 150) {
+//         cloudY = -310;
+//       }
+//       box(50, 75, 50);
+//     }
+//   }
+// }
+
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+class Cloud {
+  constructor(cloudX, cloudY, cloudZ) {
+    this.x = cloudX;
+    this.y = cloudY;
+    this.z = -310;
+  }
+
+  // this.cloudX = getRandomInt(-750, 750);
+  // this.cloudZ = getRandomInt(250, 450);
+  // this.cloudY = -310;
+
+  display() {
+    // rotateX(1.5);
+    push();
+    translate(this.x, this.y, this.z);
+    box(50, 50, 75);
+    pop();
+  }
+
+  move() {
+    // translate(this.x, this.y, this.z);
+    this.z = this.z + 100;
+  }
 }
