@@ -14,7 +14,7 @@ var scl = 30;
 
 // Stores cloud objects.
 var clouds = [];
-var cloudLimit = 5;
+var cloudLimit = 5 - 1;
 var cloudChancePercent = 10
 
 // Creates the terrain.
@@ -28,13 +28,12 @@ let ship;
 
 // Dictates frame rate. Low on purpose for vintage effect.
 let frames = 1;
-console.log(window.innerWidth)
-console.log(window.innerHeight)
-
 // Creates dynamic terrain size.
 if (window) {
   var w = window.innerWidth * 1.5;
+  var innerw = window.innerWidth;
   var h = window.innerHeight * 0.75;
+  var innerh = window.innerHeight;
 }
 
 window.onresize = function () {
@@ -47,15 +46,16 @@ let shiftR = false;
 let shiftU = false;
 let shiftD = false;
 
+function preload() {
+  ship = loadModel("ship.obj", true);
+  cloud1 = loadModel("cloud1.obj", true);
+}
+
 function setup() {
-  createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  createCanvas(innerw, innerh, WEBGL);
   // Perspective adjusts the limitations of the camera for object clipping.
   perspective(PI / 3, width / height, (h / 2) + 100, h + 400);
   frameRate(frames);
-
-  // Ship.
-  ship = loadModel("ship.obj", true);
-  cloud1 = loadModel("cloud1.obj", true);
 
   cols = Math.ceil(w / sclw);
   rows = Math.ceil(h / sclh);
@@ -127,7 +127,7 @@ function draw() {
 
   // Creates cloud models.
   cloudChance = getRandomInt(1, 100);
-  if (cloudChance <= cloudChancePercent && clouds.length <= (cloudLimit - 1)) {
+  if (cloudChance <= cloudChancePercent && clouds.length <= cloudLimit) {
     let cloudX = getRandomInt(-w/3, w/3);
     let cloudY = getRandomInt(-h/6, -h/3);
     let cloudZ = -310;
@@ -145,7 +145,6 @@ function draw() {
 
   for (let i = clouds.length - 1; i >= 0; i--) {
     if (clouds[i].z >= 500) {
-      // console.log(clouds[i]);
       clouds.splice(i, 1);
     }
   }
@@ -169,6 +168,8 @@ function draw() {
     firstDrawCompleted = true;
     overlay.style.animation = "fadeOut 0.5s ease-out 0s forwards";
   }
+
+  // requestAnimationFrame(draw);
 }
 
 // Creates the array that in turn shapes the terrain.
