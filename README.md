@@ -1,3 +1,4 @@
+<img src="assets/flight_logo.png">
 
 # Flight
 
@@ -7,8 +8,9 @@ This project uses Perlin noise and basic 3D objects to provide a smooth, satisfy
 
 
 ## Demo
+<img width="640" height="480" src="assets/flight_screenshot.png">
 <video width="640" height="480" controls>
-  <source src="flight_demo.mp4" type="video/mp4">
+  <source src="assets/flight_demo.mp4" type="video/mp4">
 </video>
 
 ## Acknowledgements
